@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coming Soon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: linear-gradient(to bottom, #0f0c29, #093028);
+        animation: fadeIn 2s ease-out;
+        cursor: url('https://cdn-icons-png.flaticon.com/512/766/766110.png') 16 16, auto;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .text-3d {
+        text-shadow:
+          0 0 10px #7fff7f,
+          0 0 20px #00ff00,
+          0 0 40px #00ff00,
+          0 0 80px #00ff00;
+        animation: glowPulse 2s infinite ease-in-out alternate;
+        transform-style: preserve-3d;
+        transition: transform 0.1s ease-out;
+        color: #ccffcc;
+      }
+
+      @keyframes glowPulse {
+        0% {
+          text-shadow:
+            0 0 10px #7fff7f,
+            0 0 20px #00ff00,
+            0 0 40px #00ff00,
+            0 0 80px #00ff00;
+        }
+        100% {
+          text-shadow:
+            0 0 5px #4caf50,
+            0 0 10px #4caf50,
+            0 0 20px #4caf50,
+            0 0 40px #4caf50;
+        }
+      }
+
+      .animated-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(90deg, #a8ff78, #78ffd6);
+        background-size: 200% 100%;
+        animation: moveBar 5s linear infinite;
+        z-index: 50;
+      }
+
+      @keyframes moveBar {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      #leavesCanvas,
+      #sunRaysCanvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .glass-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 12px 0;
+        display: flex;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.4);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 40;
+      }
+
+      .glass-bar button {
+        color: #ccffcc;
+        font-weight: bold;
+        background: transparent;
+        border: none;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .glass-bar button::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 100%;
+        transform: translate(-50%, -50%);
+        transition: width 0.4s ease, height 0.4s ease;
+        z-index: -1;
+      }
+
+      .glass-bar button:hover::after {
+        width: 200px;
+        height: 200px;
+      }
+
+      .glass-bar button:hover {
+        color: #a8ff78;
+        transform: scale(1.1);
+      }
+
+      @media (max-width: 768px) {
+        body {
+          cursor: auto;
+        }
+      }
+    </style>
+  </head>
+  <body class="text-white min-h-screen overflow-hidden">
+    <canvas id="sunRaysCanvas"></canvas>
+    <canvas id="leavesCanvas"></canvas>
+    <div class="animated-bar"></div>
+
+    <div class="text-center space-y-8 p-4 md:p-6 flex justify-center items-center min-h-screen relative z-10">
+      <h1 id="comingText" class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-3d select-none">
+        COMING SOON
+      </h1>
+    </div>
+
+    <div class="glass-bar">
+      <button>Home</button>
+    </div>
+
+    <audio autoplay loop>
+      <source src="https://cdn.pixabay.com/audio/2023/03/28/audio_8f1cf7f5d1.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+
+    <script>
+      const text = document.getElementById("comingText");
+      document.addEventListener("mousemove", (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 30;
+        const y = (e.clientY / window.innerHeight - 0.5) * -30;
+        text.style.transform = `perspective(500px) rotateX(${y}deg) rotateY(${x}deg)`;
+      });
+
+      const leavesCanvas = document.getElementById("leavesCanvas");
+      const leavesCtx = leavesCanvas.getContext("2d");
+      leavesCanvas.width = window.innerWidth;
+      leavesCanvas.height = window.innerHeight;
+
+      const leaves = Array.from({ length: 30 }).map(() => ({
+        x: Math.random() * leavesCanvas.width,
+        y: Math.random() * -leavesCanvas.height,
+        speedY: 0.5 + Math.random(),
+        angle: Math.random() * Math.PI * 2,
+        radius: Math.random() * 3 + 2,
+      }));
+
+      function drawLeaves() {
+        leavesCtx.clearRect(0, 0, leavesCanvas.width, leavesCanvas.height);
+        leaves.forEach(leaf => {
+          leavesCtx.beginPath();
+          leavesCtx.ellipse(leaf.x, leaf.y, leaf.radius, leaf.radius * 0.5, leaf.angle, 0, 2 * Math.PI);
+          leavesCtx.fillStyle = "rgba(124, 252, 0, 0.5)";
+          leavesCtx.fill();
+
+          leaf.y += leaf.speedY;
+          leaf.x += Math.sin(leaf.angle) * 0.5;
+          if (leaf.y > leavesCanvas.height) leaf.y = -10;
+        });
+        requestAnimationFrame(drawLeaves);
+      }
+      drawLeaves();
+
+      const raysCanvas = document.getElementById("sunRaysCanvas");
+      const raysCtx = raysCanvas.getContext("2d");
+      raysCanvas.width = window.innerWidth;
+      raysCanvas.height = window.innerHeight;
+
+      function drawSunRays() {
+        raysCtx.clearRect(0, 0, raysCanvas.width, raysCanvas.height);
+        for (let i = 0; i < 30; i++) {
+          const angle = (i / 30) * 2 * Math.PI;
+          const x = raysCanvas.width / 2 + Math.cos(angle) * 300;
+          const y = raysCanvas.height / 2 + Math.sin(angle) * 300;
+          const gradient = raysCtx.createLinearGradient(raysCanvas.width / 2, raysCanvas.height / 2, x, y);
+          gradient.addColorStop(0, "rgba(255,255,200,0.08)");
+          gradient.addColorStop(1, "rgba(255,255,200,0)");
+
+          raysCtx.beginPath();
+          raysCtx.moveTo(raysCanvas.width / 2, raysCanvas.height / 2);
+          raysCtx.lineTo(x, y);
+          raysCtx.strokeStyle = gradient;
+          raysCtx.lineWidth = 1.5;
+          raysCtx.stroke();
+        }
+        requestAnimationFrame(drawSunRays);
+      }
+      drawSunRays();
+    </script>
+  </body>
+</html>
